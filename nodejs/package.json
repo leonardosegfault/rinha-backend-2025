@@ -1,0 +1,25 @@
+{
+  "name": "rinha-backend-2025",
+  "version": "1.0.0",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/leonardosegfault/rinha-de-backend-2025-nodejs.git"
+  },
+  "author": "leonardosegfault",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/leonardosegfault/rinha-de-backend-2025-nodejs/issues"
+  },
+  "homepage": "https://github.com/leonardosegfault/rinha-de-backend-2025-nodejs#readme",
+  "description": "",
+  "dependencies": {
+    "ioredis": "^5.7.0",
+    "p-queue": "^8.1.0",
+    "undici": "^7.13.0"
+  }
+}
