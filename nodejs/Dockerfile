@@ -6,10 +6,6 @@ COPY package*.json .
 
 RUN npm ci --omit=dev
 
-COPY entrypoint.sh /usr/local/bin/
-
-RUN chmod +x /usr/local/bin/entrypoint.sh
-
 COPY . .
 
 RUN mkdir -p /tmp/sockets && chown -R node:node /tmp/sockets 
