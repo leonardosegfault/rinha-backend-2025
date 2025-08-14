@@ -39,7 +39,7 @@ if (UNIX_SOCK) {
   }
 
   app.listen(UNIX_SOCK, () => {
-    fs.chmodSync(UNIX_SOCK, 777);
+    fs.chmodSync(UNIX_SOCK, 0o777);
 
     console.log("[SERVIDOR] rodando no socket " + UNIX_SOCK)
   });

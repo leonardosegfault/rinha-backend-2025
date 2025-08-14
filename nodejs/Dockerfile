@@ -14,6 +14,4 @@ COPY . .
 
 EXPOSE 9999
 
-USER node
-
 CMD ["/bin/sh", "entrypoint.sh"]
