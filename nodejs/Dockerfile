@@ -12,6 +12,10 @@ RUN chmod +x /usr/local/bin/entrypoint.sh
 
 COPY . .
 
+RUN mkdir -p /tmp/sockets && chown -R node:node /tmp/sockets 
+
 EXPOSE 9999
 
-CMD ["/bin/sh", "entrypoint.sh"]
+USER node
+
+CMD ["npm", "start"]
