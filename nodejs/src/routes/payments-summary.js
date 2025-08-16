@@ -1,35 +1,5 @@
 import { ServerResponse } from "node:http";
-import { EventEmitter } from "node:events";
-import { client, getPubSubClient, fetchSummary } from "../services/redis.js";
-
-// let listenerCount = 0;
-// const ackEmitter = new EventEmitter();
-
-// const pubsub = getPubSubClient();
-// await pubsub.subscribe("summary:ack");
-
-// pubsub.on("message", (channel, event) => {
-//   console.log(`[PUBSUB] recebeu evento "${event}" (${channel})`);
-
-//   if (event == "paused") {
-//     listenerCount--;
-
-//     if (listenerCount <= 0) {
-//       ackEmitter.emit("done");
-//     }
-//   }
-// });
-
-async function publishPauseAndWait() {
-  const receivedAmount = await client.publish("summary:ctrl", "pause");
-  console.log(`[PUBSUB] publicado pausa para ${receivedAmount}`);
-
-  // listenerCount = receivedAmount;
-
-  // return new Promise((resolve) => 
-  //   ackEmitter.once("done", () => resolve())
-  // );
-}
+import { client, fetchSummary } from "../services/redis.js";
 
 /**
  * @param {ServerResponse} ctx
@@ -42,7 +12,8 @@ export default async function handlePaymentsSummaryRoute(ctx, url) {
   let to = url.searchParams.get("to");
   if (to) to = new Date(to).getTime();
 
-  publishPauseAndWait();
+  let receivedAmount = await client.publish("summary:ctrl", "pause");
+  console.log(`[PUBSUB] publicado pausa para ${receivedAmount}.`);
 
   const [def, fall] = await Promise.all([
     fetchSummary("default", from, to),
@@ -62,6 +33,6 @@ export default async function handlePaymentsSummaryRoute(ctx, url) {
     })
   );
 
-  const receivedAmount = await client.publish("summary:ctrl", "resume");
+  receivedAmount = await client.publish("summary:ctrl", "resume");
   console.log(`[PUBSUB] publicado retomada para ${receivedAmount}.`);
 }
