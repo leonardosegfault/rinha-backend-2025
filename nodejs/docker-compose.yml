@@ -1,5 +1,5 @@
 x-common-env: &env
-  REDIS: "redis://redis:6379"
+  REDIS: "/tmp/sockets/redis.sock"
   DEFAULT: "http://payment-processor-default:8080"
   FALLBACK: "http://payment-processor-fallback:8080"
 
@@ -45,11 +45,15 @@ services:
   redis:
     image: redis:8-alpine
     container_name: rinha-redis
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
     deploy:
       resources:
         limits:
           cpus: "0.1"
           memory: "12MB"
+    volumes:
+      - ./config/redis.conf:/usr/local/etc/redis/redis.conf:ro
+      - socks:/tmp/sockets
     networks:
       - backend
 
