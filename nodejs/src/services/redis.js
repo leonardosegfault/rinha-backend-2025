@@ -2,6 +2,9 @@ import Redis from "ioredis";
 
 export const client = newInstance();
 /** @type {Redis} */
+
+let queueClient = null;
+/** @type {Redis} */
 let pubsubClient = null;
 
 const addSHA = await client.script("LOAD",
@@ -27,6 +30,38 @@ export function getPubSubClient() {
   }
 
   return pubsubClient;
+}
+
+/**
+ * @returns {Redis}
+ */
+export function getQueueClient() {
+  if (!queueClient) {
+    queueClient = newInstance();
+
+    return queueClient;
+  }
+
+  return queueClient;
+}
+
+/**
+ * @param {string} correlationId 
+ * @param {number} amount 
+ */
+export async function pushQueue(correlationId, amount) {
+  await client.rpush("queue", `${correlationId} ${amount}`);
+}
+
+export async function popQueue() {
+  const queueClient = getQueueClient();
+  const [_, item] = await queueClient.blpop("queue", 0);
+  const values = item.split(" ");
+
+  return {
+    correlationId: values[0],
+    amount: Number(values[1])
+  }
 }
 
 /**
@@ -59,10 +94,9 @@ export async function fetchSummary(processor, from, to) {
   };
 }
 
-/**
- * @param {"default" | "fallback"} processor 
- */
-export async function clearSummary(processor) {
+export async function clearSummary() {
   await client.set("uniqueid", 0);
-  await client.del(processor);
+  await client.del("queue");
+  await client.del("default");
+  await client.del("fallback");
 }

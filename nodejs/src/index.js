@@ -13,16 +13,18 @@ const app = http.createServer((req, res) => {
   });
   req.on("end", async () => {
     if (req.url == "/payments") {
-      handlePaymentsRoute(data);
       res.statusCode = 201;
+      res.end();
+
+      handlePaymentsRoute(data);
     } else if (req.url.startsWith("/payments-summary")) {
       const url = new URL("http://" + req.headers.host + req.url);
       await handlePaymentsSummaryRoute(res, url);
+      res.end();
     } else if (req.url == "/purge-payments") {
       await handlePaymentsPurgeRoute(res);
+      res.end();
     }
-
-    res.end();
   });
 });
 
